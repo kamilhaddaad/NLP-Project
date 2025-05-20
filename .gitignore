@@ -187,3 +187,6 @@ cython_debug/
 genre_predictor/models/book_analyzer_model/model.safetensors 
 blurb_generator/gpt2_blurb_finetuned/model.safetensors
 title_generator/models/book_title_generator_t5_model/model.safetensors
+
+# VSCode
+.vscode/launch.json
