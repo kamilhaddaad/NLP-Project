@@ -7,6 +7,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from transformers import GPT2Tokenizer, GPT2LMHeadModel, T5ForConditionalGeneration, T5Tokenizer
 import torch
+from summary_generator.summary_generator import SummaryGenerator
 
 # Create Flask app
 app = Flask(__name__)
@@ -125,6 +126,9 @@ def generate_book_title(summary, model, tokenizer, device, num_return_sequences=
     generated_titles = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
     return generated_titles
 
+# Instantiate summary generator
+summary_generator = SummaryGenerator()
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -191,6 +195,18 @@ def generate_title_route():
         generated_titles = generate_book_title(summary, title_model, title_tokenizer, title_device)
 
         return jsonify({"titles": generated_titles})
+        
+@app.route('/generate-summary', methods=['POST'])
+def generate_summary_api():
+    title = request.form.get('title')
+    additionalInfo = request.form.get('additionalInfo')
+    if not title or not additionalInfo:
+        return jsonify({'error': 'Please enter both title and additional informations that should be included in the summary'}), 400
+    try:
+        summary = summary_generator.generate_summary(title, additionalInfo)
+        return jsonify({'summary': summary})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/static/<path:filename>')
 def serve_static(filename):
