@@ -1,7 +1,7 @@
 $(document).ready(function() {
     // Hide loading and result sections initially
-    $('.loading-recommendations, .loading-sentiment, .loading-analysis, .loading-blurb').hide();
-    $('.recommendations-result, .sentiment-result, .analysis-result, .blurb-result').hide();
+    $('.loading-recommendations, .loading-sentiment, .loading-analysis, .loading-blurb, .loading-title').hide();
+    $('.recommendations-result, .sentiment-result, .analysis-result, .blurb-result, .title-result').hide();
 
     // Book Recommendation Form Handler
     $('#recommendForm').on('submit', function(e) {
@@ -199,4 +199,94 @@ $(document).ready(function() {
             }
         });
     });
-}); 
+    // Book Title Generation Form Handler
+    $('#titleForm').on('submit', function(e) {
+        e.preventDefault();
+
+        const summary = $('#summaryInput').val();
+        const generatedTitlesDiv = $('#generatedTitles');
+        const loadingTitleDiv = $('.loading-title');
+        const titleResultDiv = $('.title-result');
+
+        if (!summary) {
+            generatedTitlesDiv.html('<p style="color: red;">Please enter a summary.</p>');
+            titleResultDiv.show();
+            return;
+        }
+
+        loadingTitleDiv.show();
+        titleResultDiv.hide();
+        generatedTitlesDiv.empty();
+
+        $.ajax({
+            url: '/generate_title',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ summary: summary }),
+            success: function(response) {
+                loadingTitleDiv.hide();
+
+                if (response.error) {
+                    generatedTitlesDiv.html(`<p style="color: red;">Error: ${response.error}</p>`);
+                } else if (response.titles && response.titles.length > 0) {
+                    let titlesHtml = '<h6>Generated Titles</h6><div id="generatedTitles">';
+                    response.titles.forEach(function(title) {
+                        titlesHtml += `<p>${title}</p>`;
+                    });
+                    titlesHtml += '</div>';
+                    titleResultDiv.html(titlesHtml);
+                } else {
+                     titleResultDiv.html('<h6>Generated Titles</h6><div id="generatedTitles"><p>No titles generated.</p></div>');
+                }
+
+                titleResultDiv.fadeIn();
+            },
+            error: function(xhr) {
+                loadingTitleDiv.hide();
+                titleResultDiv.hide();
+                alert('Error generating titles. Please try again.');
+                console.error('Error:', xhr);
+            }
+        });
+    });    
+});
+
+
+function generateTitle() {
+    const summary = document.getElementById('summaryInput').value;
+    const generatedTitlesDiv = document.getElementById('generatedTitles');
+
+    if (!summary) {
+        generatedTitlesDiv.innerHTML = '<p style="color: red;">Please enter a summary.</p>';
+        return;
+    }
+
+    generatedTitlesDiv.innerHTML = '<p>Generating titles...</p>';
+
+    fetch('/generate_title', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ summary: summary })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            generatedTitlesDiv.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+        } else if (data.titles && data.titles.length > 0) {
+            let titlesHtml = '<h3>Generated Titles:</h3><ul>';
+            data.titles.forEach(title => {
+                titlesHtml += `<li>${title}</li>`;
+            });
+            titlesHtml += '</ul>';
+            generatedTitlesDiv.innerHTML = titlesHtml;
+        } else {
+             generatedTitlesDiv.innerHTML = '<p>No titles generated.</p>';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        generatedTitlesDiv.innerHTML = `<p style="color: red;">An error occurred: ${error.message}</p>`;
+    });
+} 

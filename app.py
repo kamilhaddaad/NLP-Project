@@ -5,7 +5,7 @@ import pandas as pd
 import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from transformers import GPT2Tokenizer, GPT2LMHeadModel
+from transformers import GPT2Tokenizer, GPT2LMHeadModel, T5ForConditionalGeneration, T5Tokenizer
 import torch
 
 # Create Flask app
@@ -26,6 +26,21 @@ nlp = spacy.load("en_core_web_sm")
 # Load & initialize generate description feature
 gpt2_blurb_model = None
 gpt2_blurb_tokenizer = None
+
+# Define the path to the saved model
+MODEL_SAVE_PATH = "title_generator/models/book_title_generator_t5_model"
+
+# Load the fine-tuned model and tokenizer
+try:
+    title_tokenizer = T5Tokenizer.from_pretrained(MODEL_SAVE_PATH)
+    title_model = T5ForConditionalGeneration.from_pretrained(MODEL_SAVE_PATH)
+    title_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    title_model.to(title_device)
+except Exception as e:
+    print(f"Error loading Book Title Generation model: {e}")
+    title_tokenizer = None
+    title_model = None
+    title_device = None
 
 def preprocess_text(text):
     doc = nlp(text.lower())
@@ -84,6 +99,32 @@ def generate_blurb(topic, genre, max_length=150):
 
     return result
 
+# Function for title generator feature
+def generate_book_title(summary, model, tokenizer, device, num_return_sequences=3, max_length=64):
+    if model is None or tokenizer is None:
+        return ["Model not loaded."]
+
+    input_text = "generate title: " + summary
+    input_encoding = tokenizer(
+        input_text,
+        padding='max_length',
+        max_length=512,
+        truncation=True,
+        return_tensors='pt'
+    ).to(device)
+
+    outputs = model.generate(
+        input_ids=input_encoding['input_ids'],
+        attention_mask=input_encoding['attention_mask'],
+        max_length=max_length,
+        num_beams=5,
+        early_stopping=True,
+        num_return_sequences=num_return_sequences
+    )
+
+    generated_titles = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
+    return generated_titles
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -137,6 +178,19 @@ def generate_blurb_api():
         return jsonify({'blurb': blurb})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/generate_title', methods=['POST'])
+def generate_title_route():
+    if request.method == 'POST':
+        data = request.get_json()
+        summary = data.get('summary', '')
+
+        if not summary:
+            return jsonify({"error": "No summary provided"}), 400
+
+        generated_titles = generate_book_title(summary, title_model, title_tokenizer, title_device)
+
+        return jsonify({"titles": generated_titles})
 
 @app.route('/static/<path:filename>')
 def serve_static(filename):
