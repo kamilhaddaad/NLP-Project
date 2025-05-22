@@ -1,0 +1,12 @@
+flask
+pandas
+spacy
+scikit-learn
+transformers
+torch
+joblib
+datasets
+sentencepiece
+sentence-transformers
+huggingface_hub[hf_xet]
+nltk

@@ -33,8 +33,7 @@ $(document).ready(function() {
                     $('#recommendationsTable').append(`
                         <tr>
                             <td>${book.Title}</td>
-                            <td>${book.Author}</td>
-                            <td>${book.Year}</td>
+                            <td>${book.Description}</td>
                         </tr>
                     `);
                 });
