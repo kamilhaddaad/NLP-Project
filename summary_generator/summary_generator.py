@@ -7,10 +7,9 @@ class SummaryGenerator:
 
     def __init__(self):
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        
-        config = PeftConfig.from_pretrained("./TinyLlama_finetuned")
+        config = PeftConfig.from_pretrained("summary_generator/TinyLlama_finetuned")
         base_model = AutoModelForCausalLM.from_pretrained(config.base_model_name_or_path)
-        self.model = PeftModel.from_pretrained(base_model, "./TinyLlama_finetuned")
+        self.model = PeftModel.from_pretrained(base_model, "summary_generator/TinyLlama_finetuned")
         self.tokenizer = AutoTokenizer.from_pretrained(config.base_model_name_or_path)
         self.model.to(self.device)
         
