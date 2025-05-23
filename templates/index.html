@@ -26,6 +26,53 @@
 
     <div class="container main-container">
       <div class="row">
+        <!-- Book Recommendation Section -->
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title mb-4">
+                <i class="fas fa-book me-2"></i>
+                Book Recommendations
+              </h5>
+              <form id="recommendForm">
+                <div class="mb-3">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="bookTitle"
+                    placeholder="Enter a book title you like..."
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="fas fa-search me-2"></i>Get Recommendations
+                </button>
+              </form>
+
+              <div class="loading-recommendations mt-3">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Finding similar books...</p>
+              </div>
+
+              <div class="recommendations-result mt-3">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Title</th>
+                        <th>Summary</th>
+                      </tr>
+                    </thead>
+                    <tbody id="recommendationsTable"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Book Analysis Section -->
         <div class="col-md-4 mb-4">
           <div class="card h-100">
@@ -213,56 +260,6 @@
               <div class="title-result mt-3" style="display: none">
                 <h6>Generated Titles</h6>
                 <div id="generatedTitles"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <!-- Book Recommendation Section -->
-        <div class="col-12 mb-4">
-          <div class="card h-100">
-            <div class="card-body d-flex flex-column">
-              <h5 class="card-title mb-4">
-                <i class="fas fa-book me-2"></i>
-                Book Recommendations
-              </h5>
-
-              <form id="recommendForm">
-                <div class="mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="bookTitle"
-                    placeholder="Enter a book title you like..."
-                    required
-                  />
-                </div>
-                <button type="submit" class="btn btn-primary w-100">
-                  <i class="fas fa-search me-2"></i>Get Recommendations
-                </button>
-              </form>
-
-              <div class="loading-recommendations mt-3" style="display: none">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mt-2">Finding similar books...</p>
-              </div>
-
-              <div class="recommendations-result mt-3" style="display: none">
-                <div class="table-responsive scrollable-content">
-                  <table class="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>Title</th>
-                        <th>Description</th>
-                      </tr>
-                    </thead>
-                    <tbody id="recommendationsTable"></tbody>
-                  </table>
-                </div>
               </div>
             </div>
           </div>

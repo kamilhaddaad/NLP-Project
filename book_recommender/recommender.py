@@ -1,42 +1,27 @@
-from bertopic import BERTopic
-from sentence_transformers import SentenceTransformer
+
 import pandas as pd
-from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
 
-topic_model = BERTopic.load("models/bertopic_model")
-embeddings = np.load("models/embeddings.npy", allow_pickle=True)
-df = pd.read_pickle("data/df_with_topics.pkl")
+df = pd.read_csv("data/books_data.csv")
+book_embeddings = np.load('models/book_embeddings.npy')
 
-def recommend_books(input_title, top_n=5):
-    input_row = df[df["title"].str.lower() == input_title.lower()]
-    if input_row.empty:
-        print("Tytuł nie znaleziony.")
-        return pd.DataFrame(columns=["title", "summary"])
-    
-    idx = input_row.index[0]
-    input_topic = df.loc[idx, "topic"]
-    input_embedding = df.loc[idx, "embedding"]
-    input_genre = df.loc[idx, "genre"]
+def recommend_books(book_title, num_recommendations=15):
+    try:
+        # Get the index of the book (case-insensitive match)
+        book_index = df[df['title'].str.lower() == book_title.lower()].index[0]
+    except IndexError:
+        print(f"Book with title '{book_title}' not found in the dataset.")
+        return pd.DataFrame(columns=["title", "summary"]) # Return empty DataFrame
 
-    similarities = cosine_similarity([input_embedding], list(df["embedding"]))[0]
+    # Get the embedding of the input book
+    input_embedding = book_embeddings[book_index].reshape(1, -1)
 
-    scores = []
-    for i in range(len(df)):
-        if df.iloc[i]["title"].lower() == input_title.lower():
-            continue
-        score = 0
-        if input_title.split()[0].lower() in df.iloc[i]["title"].lower():
-            score += 2
-        if df.iloc[i]["topic"] == input_topic:
-            score += 2
-        if df.iloc[i]["genre"].lower() == input_genre.lower():
-            score += 1
-        score += similarities[i]
-        scores.append((i, score))
+    # Calculate cosine similarity between the input book and all other books
+    similarities = cosine_similarity(input_embedding, book_embeddings).flatten()
 
-    sorted_scores = sorted(scores, key=lambda x: x[1], reverse=True)[:top_n]
-    similar_indices = [i for i, _ in sorted_scores]
-    recommended_books_df = df.iloc[similar_indices][["title", "summary"]]
+    # Get the indices of the most similar books
+    # We exclude the first one because it will be the book itself
+    similar_indices = similarities.argsort()[::-1][1:num_recommendations + 1]
 
-    return recommended_books_df
+    return df.iloc[similar_indices][["title", "summary"]]

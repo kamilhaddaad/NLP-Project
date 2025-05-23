@@ -32,8 +32,8 @@ $(document).ready(function() {
                 response.recommendations.forEach(function(book) {
                     $('#recommendationsTable').append(`
                         <tr>
-                            <td>${book.Title}</td>
-                            <td>${book.Description}</td>
+                            <td>${book.title}</td>
+                            <td>${book.summary}</td>
                         </tr>
                     `);
                 });
