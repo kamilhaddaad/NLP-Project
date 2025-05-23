@@ -199,6 +199,7 @@ $(document).ready(function() {
             }
         });
     });
+    
     // Book Title Generation Form Handler
     $('#titleForm').on('submit', function(e) {
         e.preventDefault();
@@ -249,6 +250,37 @@ $(document).ready(function() {
             }
         });
     });    
+
+    // Summary Generator Form Handler
+    $('#summaryForm').on('submit', function(e) {
+        e.preventDefault();
+        const title = $('#bookTitleSummary').val();
+        const additionalInfo = $('#additionalInfoSummary').val();
+        if (!title || !additionalInfo) {
+            alert('Please enter both title and additional informations that should be included in the summary');
+            return;
+        }
+        $('.loading-summary').show();
+        $('.summary-result').hide();
+        $.ajax({
+            url: '/generate-summary',
+            method: 'POST',
+            data: { title: title, additionalInfo: additionalInfo },
+            success: function(response) {
+                $('.loading-summary').hide();
+                if (response.summary) {
+                    $('#generatedSummary').text(response.summary);
+                    $('.summary-result').fadeIn();
+                } else {
+                    alert('No summary generated.');
+                }
+            },
+            error: function(xhr) {
+                $('.loading-summary').hide();
+                alert('Error generating summary. Please try again.');
+            }
+        });
+    });
 });
 
 
@@ -289,4 +321,4 @@ function generateTitle() {
         console.error('Error:', error);
         generatedTitlesDiv.innerHTML = `<p style="color: red;">An error occurred: ${error.message}</p>`;
     });
-} 
+    }

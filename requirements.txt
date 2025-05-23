@@ -1,0 +1,10 @@
+datasets
+Flask
+joblib
+pandas
+peft
+scikit_learn
+spacy
+torch
+transformers
+sentencepiece
