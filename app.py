@@ -8,6 +8,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from transformers import GPT2Tokenizer, GPT2LMHeadModel, T5ForConditionalGeneration, T5Tokenizer
 import torch
 from summary_generator.summary_generator import SummaryGenerator
+from book_recommender.recommender import recommend_books
 
 # Create Flask app
 app = Flask(__name__)
@@ -47,25 +48,6 @@ def preprocess_text(text):
     doc = nlp(text.lower())
     tokens = [token.lemma_ for token in doc if not token.is_stop and not token.is_punct]
     return " ".join(tokens)
-
-# Create TfidfVectorizer & TF-IDF matrix (for book recommendor feature)
-vectorizer = TfidfVectorizer()
-tfidf_matrix = vectorizer.fit_transform(df["Processed_Title"])
-
-# Calculate cosine similarities (for book recommendor feature)
-cosine_sim = cosine_similarity(tfidf_matrix, dense_output=False)
-
-# Function for book recommendor feature
-def recommend_books(book_title, num_recommendations=15):
-    processed_input = preprocess_text(book_title)
-    input_vector = vectorizer.transform([processed_input])
-    
-    similarities = cosine_similarity(input_vector, tfidf_matrix).flatten()
-    
-    similar_indices = similarities.argsort()[::-1][1:num_recommendations+1]
-    
-    recommended_books = df.iloc[similar_indices][["Title", "Author", "Year"]]
-    return recommended_books
 
 # Function for description generator feature
 def generate_blurb(topic, genre, max_length=150):
