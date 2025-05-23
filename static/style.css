@@ -232,3 +232,9 @@ h6 {
     color: #95a5a6;
     opacity: 0.7;
 } 
+
+
+.scrollable-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+}
