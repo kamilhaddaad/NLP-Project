@@ -1,274 +1,318 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Book Recommendation System</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-      rel="stylesheet"
-    />
-    <link href="/static/style.css" rel="stylesheet" />
-  </head>
-  <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Analyzer</title>
+    <link rel="icon" href="/static/book_icon.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg navbar-dark">
-      <div class="container">
-        <a class="navbar-brand" href="#">
-          <i class="fas fa-book-reader me-2"></i>
-          Book Recommendation System
-        </a>
-      </div>
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-book-reader me-2"></i>
+                Book Analyzer
+            </a>
+        </div>
     </nav>
 
-    <div class="container main-container">
-      <div class="row">
-        <!-- Book Recommendation Section -->
-        <div class="col-md-4 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title mb-4">
-                <i class="fas fa-book me-2"></i>
-                Book Recommendations
-              </h5>
-              <form id="recommendForm">
-                <div class="mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="bookTitle"
-                    placeholder="Enter a book title you like..."
-                    required
-                  />
-                </div>
-                <button type="submit" class="btn btn-primary w-100">
-                  <i class="fas fa-search me-2"></i>Get Recommendations
-                </button>
-              </form>
+    <div class="flex-grow-1">
+        <div class="container main-container">
+            <div class="row">
+                <!-- Book Recommendation Section -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">
+                                <i class="fas fa-book me-2"></i>
+                                Book Recommendations
+                            </h5>
+                            <form id="recommendForm">
+                                <div class="mb-3">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="bookTitle" 
+                                           placeholder="Enter a book title you like..."
+                                           required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search me-2"></i>Get Recommendations
+                                </button>
+                            </form>
+                            
+                            <div class="loading-recommendations mt-3">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Finding similar books...</p>
+                            </div>
 
-              <div class="loading-recommendations mt-3">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mt-2">Finding similar books...</p>
-              </div>
-
-              <div class="recommendations-result mt-3 scrollable-wrapper">
-                <div class="table-responsive">
-                  <table class="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>Title</th>
-                        <th>Summary</th>
-                      </tr>
-                    </thead>
-                    <tbody id="recommendationsTable"></tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Book Analysis Section -->
-        <div class="col-md-4 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title mb-4">
-                <i class="fas fa-microscope me-2"></i>
-                Genre Predictor
-              </h5>
-              <form id="bookAnalysisForm">
-                <div class="mb-3">
-                  <textarea
-                    class="form-control review-input"
-                    id="bookDescription"
-                    placeholder="Enter a book description to predict the genre..."
-                    required
-                  ></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">
-                  <i class="fas fa-search me-2"></i>Analyze Book
-                </button>
-              </form>
-
-              <div class="loading-analysis mt-3">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mt-2">Analyzing book content...</p>
-              </div>
-
-              <div class="analysis-result mt-3">
-                <div class="genres-section mb-4">
-                  <h6 class="mb-3">Predicted Genres</h6>
-                  <div id="genresList" class="d-flex flex-wrap gap-2"></div>
-                </div>
-
-                <div class="themes-section mb-4">
-                  <h6 class="mb-3">Key Themes</h6>
-                  <div id="themesList" class="d-flex flex-wrap gap-2"></div>
-                </div>
-
-                <div class="entities-section mb-4">
-                  <h6 class="mb-3">Key Entities</h6>
-                  <div id="entitiesList" class="d-flex flex-wrap gap-2"></div>
-                </div>
-
-                <div class="sentiment-section">
-                  <h6 class="mb-3">Emotional Tone</h6>
-                  <div class="sentiment-indicator">
-                    <div class="sentiment-bar">
-                      <div class="sentiment-fill"></div>
+                            <div class="recommendations-result mt-3 scrollable-wrapper">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Summary</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recommendationsTable">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <p class="sentiment-label mt-2"></p>
-                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Sentiment Analysis Section -->
-        <div class="col-md-4 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title mb-4">
-                <i class="fas fa-comment-alt me-2"></i>
-                Review Sentiment Analysis
-              </h5>
-              <form id="reviewForm">
-                <div class="mb-3">
-                  <textarea
-                    class="form-control review-input"
-                    id="reviewInput"
-                    placeholder="Write your book review here..."
-                    required
-                  ></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">
-                  <i class="fas fa-search me-2"></i>Analyze Sentiment
-                </button>
-              </form>
+                <!-- Book Analysis Section -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">
+                                <i class="fas fa-microscope me-2"></i>
+                                Genre Predictor
+                            </h5>
+                            <form id="bookAnalysisForm">
+                                <div class="mb-3">
+                                    <textarea class="form-control review-input" 
+                                              id="bookDescription" 
+                                              placeholder="Enter a book description to predict the genre..."
+                                              required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search me-2"></i>Analyze Book
+                                </button>
+                            </form>
 
-              <div class="loading-sentiment mt-3">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mt-2">Analyzing your review...</p>
-              </div>
+                            <div class="loading-analysis mt-3">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Analyzing book content...</p>
+                            </div>
 
-              <div class="sentiment-result mt-3">
-                <div class="text-center">
-                  <div class="sentiment-icon mb-3">
-                    <i class="fas fa-thumbs-up positive"></i>
-                    <i class="fas fa-thumbs-down negative"></i>
-                  </div>
-                  <h4 class="mb-3">Sentiment Analysis Result</h4>
-                  <p class="mb-4">
-                    Your review is <span class="sentiment-text"></span>
-                  </p>
-                  <div class="confidence-container">
-                    <p class="mb-1">Confidence Level</p>
-                    <div class="confidence-bar">
-                      <div class="confidence-fill"></div>
+                            <div class="analysis-result mt-3">
+                                <div class="genres-section mb-4">
+                                    <h6 class="mb-3">Predicted Genres</h6>
+                                    <div id="genresList" class="d-flex flex-wrap gap-2">
+                                    </div>
+                                </div>
+
+                                <div class="themes-section mb-4">
+                                    <h6 class="mb-3">Key Themes</h6>
+                                    <div id="themesList" class="d-flex flex-wrap gap-2">
+                                    </div>
+                                </div>
+
+                                <div class="entities-section mb-4">
+                                    <h6 class="mb-3">Key Entities</h6>
+                                    <div id="entitiesList" class="d-flex flex-wrap gap-2">
+                                    </div>
+                                </div>
+
+                                <div class="sentiment-section">
+                                    <h6 class="mb-3">Emotional Tone</h6>
+                                    <div class="sentiment-indicator">
+                                        <div class="sentiment-bar">
+                                            <div class="sentiment-fill"></div>
+                                        </div>
+                                        <p class="sentiment-label mt-2"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <p class="mt-2 confidence-value"></p>
-                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Book Description Generator Section -->
-        <div class="col-md-4 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title mb-4">
-                <i class="fas fa-magic me-2"></i>
-                Book Description Generator
-              </h5>
-              <form id="blurbForm">
-                <div class="mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="blurbTitle"
-                    placeholder="Enter a topic..."
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="blurbGenre"
-                    placeholder="Enter a book genre..."
-                    required
-                  />
-                </div>
-                <button type="submit" class="btn btn-primary w-100">
-                  <i class="fas fa-magic me-2"></i>Generate Book Description
-                </button>
-              </form>
-              <div class="loading-blurb mt-3" style="display: none">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mt-2">Generating blurb...</p>
-              </div>
-              <div class="blurb-result mt-3" style="display: none">
-                <h6>Generated Book Description</h6>
-                <p id="generatedBlurb"></p>
-              </div>
-            </div>
-          </div>
-        </div>
+                <!-- Sentiment Analysis Section -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">
+                                <i class="fas fa-comment-alt me-2"></i>
+                                Review Sentiment Analysis
+                            </h5>
+                            <form id="reviewForm">
+                                <div class="mb-3">
+                                    <textarea class="form-control review-input" 
+                                              id="reviewInput" 
+                                              placeholder="Write your book review here..."
+                                              required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search me-2"></i>Analyze Sentiment
+                                </button>
+                            </form>
 
-        <!-- Book Title Generator Section -->
-        <div class="col-md-4 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title mb-4">
-                <i class="fas fa-pen-fancy me-2"></i>
-                Book Title Generator
-              </h5>
-              <form id="titleForm">
-                <div class="mb-3">
-                  <textarea
-                    class="form-control"
-                    id="summaryInput"
-                    rows="4"
-                    placeholder="Enter book summary here..."
-                    required
-                  ></textarea>
+                            <div class="loading-sentiment mt-3">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Analyzing your review...</p>
+                            </div>
+
+                            <div class="sentiment-result mt-3">
+                                <div class="text-center">
+                                    <div class="sentiment-icon mb-3">
+                                        <i class="fas fa-thumbs-up positive"></i>
+                                        <i class="fas fa-thumbs-down negative"></i>
+                                    </div>
+                                    <h4 class="mb-3">Sentiment Analysis Result</h4>
+                                    <p class="mb-4">Your review is <span class="sentiment-text"></span></p>
+                                    <div class="confidence-container">
+                                        <p class="mb-1">Confidence Level</p>
+                                        <div class="confidence-bar">
+                                            <div class="confidence-fill"></div>
+                                        </div>
+                                        <p class="mt-2 confidence-value"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">
-                  <i class="fas fa-pen-fancy me-2"></i>Generate Titles
-                </button>
-              </form>
-              <div class="loading-title mt-3" style="display: none">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
+
+                <!-- Book Description Generator Section -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">
+                                <i class="fas fa-magic me-2"></i>
+                                Book Description Generator
+                            </h5>
+                            <form id="blurbForm">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="blurbTitle" placeholder="Enter a topic..." required>
+                                </div>
+                                <div class="mb-3">
+                                    <select class="form-control" id="blurbGenre" required>
+                                        <option value="fantasy">Fantasy</option>
+                                        <option value="science">Science</option>
+                                        <option value="crime">Crime</option>
+                                        <option value="history">History</option>
+                                        <option value="horror">Horror</option>
+                                        <option value="thriller">Thriller</option>
+                                        <option value="psychology">Psychology</option>
+                                        <option value="romance">Romance</option>
+                                        <option value="sports">Sports</option>
+                                        <option value="travel">Travel</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-pen-fancy me-2"></i>Generate Book Description
+                                </button>
+                            </form>
+                            <div class="loading-blurb mt-3" style="display:none;">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Generating blurb...</p>
+                            </div>
+                            <div class="blurb-result mt-3" style="display:none;">
+                                <h6>Generated Book Description</h6>
+                                <p id="generatedBlurb"></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <p class="mt-2">Generating titles...</p>
-              </div>
-              <div class="title-result mt-3" style="display: none">
-                <h6>Generated Titles</h6>
-                <div id="generatedTitles"></div>
-              </div>
+
+                <!-- Book Title Generator Section -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">
+                                <i class="fas fa-pen-fancy me-2"></i>
+                                Book Title Generator
+                            </h5>
+                            <form id="titleForm">
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="summaryInput" rows="4" placeholder="Enter book summary here..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-pen-fancy me-2"></i>Generate Titles
+                                </button>
+                            </form>
+                            <div class="loading-title mt-3" style="display:none;">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Generating titles...</p>
+                            </div>
+                            <div class="title-result mt-3" style="display:none;">
+                                <h6>Generated Titles</h6>
+                                <div id="generatedTitles">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Summary Generator Section-->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">
+                                <i class="fa-solid fa-book"></i>
+                                Book Summary Generator
+                            </h5>
+                            <form id="summaryForm">
+                                <div class="mb-3">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="bookTitleSummary" 
+                                           placeholder="Write a book title..."
+                                           required>
+                                </div>
+                                <div class="mb-3">
+                                    <select type="text" class="form-control" id="additionalInfoSummary" placeholder="Tone..."required>
+                                        <option value="professional">professional</option>
+                                        <option value="funny">funny</option>
+                                        <option value="dramatic">dramatic</option>
+                                        <option value="friendly">friendly</option>
+                                        <option value="serious">serious</option>
+                                        <option value="sarcastic">sarcastic</option>
+                                        <option value="enthusiastic">enthusiastic</option>
+                                        <option value="casual">casual</option>
+                                        <option value="formal">formal</option>
+                                        <option value="informative">informative</option>
+                                        <option value="academic">academic</option>
+                                        <option value="like a story told by an old man">like a story told by an old man</option>
+
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-pen-fancy me-2"></i>Generate Summary
+                                </button>
+                            </form>
+                            <div class="loading-summary mt-3" style="display:none;">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Generating summary...</p>
+                            </div>
+                            <div class="summary-result mt-3" style="display:none;">
+                                <h6>Generated Summary</h6>
+                                <div id="generatedSummary">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/static/main.js"></script>
-  </body>
-</html>
+    <footer class="footer py-3 text-light text-center" style="background-color: var(--primary-color);">
+        <div class="container">
+            <span>© 2025 Book Analyzer. All rights reserved.</span>
+        </div>
+    </footer>
+</body>
+</html> 
