@@ -3,8 +3,8 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
-df = pd.read_csv("data/books_data.csv")
-book_embeddings = np.load('models/book_embeddings.npy')
+df = pd.read_csv("book_recommender/data/books_data.csv")
+book_embeddings = np.load('book_recommender./models/book_embeddings.npy')
 
 def recommend_books(book_title, num_recommendations=15):
     try:
