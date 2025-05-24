@@ -1,7 +1,52 @@
 $(document).ready(function() {
     // Hide loading and result sections initially
-    $('.loading-recommendations, .loading-sentiment, .loading-analysis, .loading-blurb, .loading-title').hide();
-    $('.recommendations-result, .sentiment-result, .analysis-result, .blurb-result, .title-result').hide();
+    $('.loading-description-based-recommendations, .loading-recommendations, .loading-sentiment, .loading-analysis, .loading-blurb, .loading-title').hide();
+    $('.recommendations-description-based-result, .recommendations-result, .sentiment-result, .analysis-result, .blurb-result, .title-result').hide();
+
+    // Book Recommendation Description Based Form Handler
+    $('#recommendDescriptionBasedForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const bookTitle = $('#bookTitleDescriptionBased').val();
+        if (!bookTitle) {
+            alert('Please enter a book title');
+            return;
+        }
+
+        // Show loading spinner
+        $('.loading-description-based-recommendations').show();
+        $('.recommendations-description-based-result').hide();
+
+        // Make API call
+        $.ajax({
+            url: '/recommend-description-based',
+            method: 'POST',
+            data: { book_title_description_based: bookTitle },
+            success: function(response) {
+                $('.loading-description-based-recommendations').hide();
+                
+                // Clear previous results
+                $('#recommendationsDescriptionBasedTable').empty();
+                
+                // Add new results
+                response.recommendations.forEach(function(book) {
+                    $('#recommendationsDescriptionBasedTable').append(`
+                        <tr>
+                            <td>${book.title}</td>
+                            <td>${book.summary}</td>
+                        </tr>
+                    `);
+                });
+                
+                // Show results
+                $('.recommendations-description-based-result').fadeIn();
+            },
+            error: function(xhr) {
+                $('.loading-description-based-recommendations').hide();
+                alert('Error getting recommendations. Please try again.');
+            }
+        });
+    });
 
     // Book Recommendation Form Handler
     $('#recommendForm').on('submit', function(e) {
@@ -19,7 +64,7 @@ $(document).ready(function() {
 
         // Make API call
         $.ajax({
-            url: '/recommend',
+            url: '/recommend-title-based',
             method: 'POST',
             data: { book_title: bookTitle },
             success: function(response) {
@@ -32,8 +77,9 @@ $(document).ready(function() {
                 response.recommendations.forEach(function(book) {
                     $('#recommendationsTable').append(`
                         <tr>
-                            <td>${book.title}</td>
-                            <td>${book.summary}</td>
+                            <td>${book.Title}</td>
+                            <td>${book.Author}</td>
+                            <td>${book.Year}</td>
                         </tr>
                     `);
                 });

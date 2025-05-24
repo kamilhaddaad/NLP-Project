@@ -1,38 +1,25 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from review_sentiment_analysis.book_review_predictor import predict_sentiment
 from genre_predictor.book_analyzer import BookAnalyzer
-import pandas as pd
-import spacy
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 from transformers import GPT2Tokenizer, GPT2LMHeadModel, T5ForConditionalGeneration, T5Tokenizer
 import torch
 from summary_generator.summary_generator import SummaryGenerator
-from book_recommender.recommender import recommend_books
+from book_recommender.recommender import recommend_books_description_based, recommend_books_title_based
 
 # Create Flask app
 app = Flask(__name__)
 
-# Initialize book recommendor feature
-df = pd.read_csv("bookrecommendor_data/Books_Preprocessed.csv")
-df = df[["ISBN", "Title", "Author", "Year", "Publisher", "Processed_Title"]].dropna()
-df.columns = ["ISBN", "Title", "Author", "Year", "Publisher", "Processed_Title"]
-df = df.drop_duplicates(subset=["Title"])
-
 # Initialize book analyzer feature
 book_analyzer = BookAnalyzer()
-
-# Load Spacy model
-nlp = spacy.load("en_core_web_sm")
 
 # Load & initialize generate description feature
 gpt2_blurb_model = None
 gpt2_blurb_tokenizer = None
 
-# Define the path to the saved model
+# Define the path to the title generator saved model
 MODEL_SAVE_PATH = "title_generator/models/book_title_generator_t5_model"
 
-# Load the fine-tuned model and tokenizer
+# Load the title generator fine-tuned model and tokenizer
 try:
     title_tokenizer = T5Tokenizer.from_pretrained(MODEL_SAVE_PATH)
     title_model = T5ForConditionalGeneration.from_pretrained(MODEL_SAVE_PATH)
@@ -43,11 +30,6 @@ except Exception as e:
     title_tokenizer = None
     title_model = None
     title_device = None
-
-def preprocess_text(text):
-    doc = nlp(text.lower())
-    tokens = [token.lemma_ for token in doc if not token.is_stop and not token.is_punct]
-    return " ".join(tokens)
 
 # Function for description generator feature
 def generate_blurb(topic, genre, max_length=150):
@@ -115,19 +97,33 @@ summary_generator = SummaryGenerator()
 def home():
     return render_template('index.html')
 
-@app.route('/recommend', methods=['POST'])
-def recommend():
-    book_title = request.form.get('book_title')
+@app.route('/recommend-description-based', methods=['POST'])
+def recommend_description_based():
+    book_title = request.form.get('book_title_description_based')
     if not book_title:
         return jsonify({'error': 'Please enter a book title'}), 400
     
     try:
-        recommendations = recommend_books(book_title)
+        recommendations = recommend_books_description_based(book_title)
         return jsonify({
             'recommendations': recommendations.to_dict('records')
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/recommend-title-based', methods=['POST'])
+def recommend_title_based():
+    book_title = request.form.get('book_title')
+    if not book_title:
+        return jsonify({'error': 'Please enter a book title'}), 400
+    
+    try:
+        recommendations = recommend_books_title_based(book_title)
+        return jsonify({
+            'recommendations': recommendations.to_dict('records')
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500              
 
 @app.route('/analyze', methods=['POST'])
 def analyze():

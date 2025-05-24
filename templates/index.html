@@ -24,11 +24,56 @@
         </a>
       </div>
     </nav>
-
     <div class="flex-grow-1">
       <div class="container main-container">
         <!-- ROW I -->
         <div class="row">
+            <!-- Book Recommendation Section -->
+            <div class="col-md-4 mb-4">
+              <div class="card h-100">
+                  <div class="card-body">
+                      <h5 class="card-title mb-4">
+                        <i class="fas fa-book-open me-2"></i>
+                          Book Recommendor (Title Based)
+                      </h5>
+                      <form id="recommendForm">
+                          <div class="mb-3">
+                              <input type="text" 
+                                     class="form-control" 
+                                     id="bookTitle" 
+                                     placeholder="Enter a book title you like..."
+                                     required>
+                          </div>
+                          <button type="submit" class="btn btn-primary w-100">
+                              <i class="fas fa-search me-2"></i>Get Recommendations
+                          </button>
+                      </form>
+                      
+                      <div class="loading-recommendations mt-3">
+                          <div class="spinner-border text-primary" role="status">
+                              <span class="visually-hidden">Loading...</span>
+                          </div>
+                          <p class="mt-2">Finding similar books...</p>
+                      </div>
+
+                      <div class="recommendations-result mt-3">
+                          <div class="table-responsive">
+                              <table class="table table-hover">
+                                  <thead>
+                                      <tr>
+                                          <th>Title</th>
+                                          <th>Author</th>
+                                          <th>Year</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody id="recommendationsTable">
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>           
           <!-- Book Analysis Section -->
           <div class="col-md-4 mb-4 second-row">
             <div class="card h-100">
@@ -87,7 +132,6 @@
               </div>
             </div>
           </div>
-
           <!-- Sentiment Analysis Section -->
           <div class="col-md-4 mb-4">
             <div class="card h-100">
@@ -139,7 +183,10 @@
               </div>
             </div>
           </div>
+        </div>
 
+        <!-- ROW II -->
+        <div class="row">
           <!-- Book Title Generator Section -->
           <div class="col-md-4 mb-4">
             <div class="card h-100">
@@ -153,6 +200,7 @@
                     <textarea
                       class="form-control"
                       id="summaryInput"
+                      rows="4"
                       placeholder="Enter book summary here..."
                       required
                     ></textarea>
@@ -173,13 +221,9 @@
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- ROW II -->
-        <div class="row">
+          </div>                   
           <!-- Book Description Generator Section -->
-          <div class="col-md-6 mb-4 third-row">
+          <div class="col-md-4 mb-4 third-row">
             <div class="card h-100">
               <div class="card-body">
                 <h5 class="card-title mb-4">
@@ -228,9 +272,8 @@
               </div>
             </div>
           </div>
-
           <!-- Summary Generator Section-->
-          <div class="col-md-6 mb-4">
+          <div class="col-md-4 mb-4">
             <div class="card h-100">
               <div class="card-body">
                 <h5 class="card-title mb-4">
@@ -292,20 +335,20 @@
 
         <!-- ROW III -->
         <div class="row">
-          <!-- Book Recommendation Section -->
+          <!-- Book Recommendation Description Based Section -->
           <div class="col-12 mb-4">
             <div class="card h-100">
               <div class="card-body">
                 <h5 class="card-title mb-4">
-                  <i class="fas fa-book me-2"></i>
-                  Book Recommendations
+                  <i class="fas fa-book-open me-2"></i>
+                  Book Recommendor (Description Based)
                 </h5>
-                <form id="recommendForm">
+                <form id="recommendDescriptionBasedForm">
                   <div class="mb-3">
                     <input
                       type="text"
                       class="form-control"
-                      id="bookTitle"
+                      id="bookTitleDescriptionBased"
                       placeholder="Enter a book title you like..."
                       required
                     />
@@ -315,14 +358,14 @@
                   </button>
                 </form>
 
-                <div class="loading-recommendations mt-3">
+                <div class="loading-description-based-recommendations mt-3">
                   <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                   </div>
                   <p class="mt-2">Finding similar books...</p>
                 </div>
 
-                <div class="recommendations-result mt-3 scrollable-wrapper">
+                <div class="recommendations-description-based-result mt-3 scrollable-wrapper">
                   <div class="table-responsive">
                     <table class="table table-hover">
                       <thead>
@@ -331,14 +374,14 @@
                           <th>Summary</th>
                         </tr>
                       </thead>
-                      <tbody id="recommendationsTable"></tbody>
+                      <tbody id="recommendationsDescriptionBasedTable"></tbody>
                     </table>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </div>        
       </div>
     </div>
 
